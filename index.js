@@ -14,11 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const PORT = 8080;
 
-// ✅ Check for required env variable
-if (!process.env.GOOGLE_SHEET_ID) {
-  console.error("❌ GOOGLE_SHEET_ID not found in .env file");
-  process.exit(1);
-}
+
 
 // ✅ Load client credentials
 const credentials = JSON.parse(
@@ -72,7 +68,10 @@ async function getSheetData(auth) {
 // ✅ API Endpoint
 app.get("/api/topics", async (req, res) => {
   console.log("📥 Incoming request to /api/topics");
-
+if (!process.env.GOOGLE_SHEET_ID) {
+    console.error("❌ GOOGLE_SHEET_ID not found in environment");
+    return res.status(500).send("GOOGLE_SHEET_ID is not set");
+  }
   try {
     const auth = authorizeWithToken();
     console.log("✅ Authorized with Google");
